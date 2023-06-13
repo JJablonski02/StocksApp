@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using StocksApp.Models;
 using StocksApp.Services;
 
 namespace StocksApp.Controllers
@@ -21,7 +22,16 @@ namespace StocksApp.Controllers
                 _tradingOptions.Value.DefaultStockSymbol = "MSFT";
             }
             Dictionary<string,object>? responseDictionary = await _stockService.GetStockPriceQuote(_tradingOptions.Value.DefaultStockSymbol);
-            return View();
+
+            Stock stock = new Stock()
+            {
+                StockSymbolName = _tradingOptions.Value.DefaultStockSymbol,
+                CurrentPrice = Convert.ToDouble(responseDictionary["c"].ToString()),
+                HighestPrice = Convert.ToDouble(responseDictionary["h"].ToString()),
+                LowestPrice = Convert.ToDouble(responseDictionary["l"].ToString()),
+                OpenPrice = Convert.ToDouble(responseDictionary["o"].ToString()),
+            };
+            return View(stock);
         }
     }
 }
